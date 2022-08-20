@@ -20,13 +20,11 @@ int main() {
     myfile.open("matrix.txt");
 
     string line;
-    bool verify = false;
 
     int line_cont = (final_i - initial_i + 1), cont = 0;
 
-    // int matrix[final_i - initial_i][final_j - initial_j];
-
-    int matrix[10][10];
+    int matrix[final_i - initial_i + 1][final_j - initial_j + 1];
+    cout << "[ " << final_i - initial_i + 1 << " ][ " << final_j - initial_j + 1 << " ]\n\n"; 
 
     int j_coord = 0;
 
@@ -37,18 +35,25 @@ int main() {
             getline(myfile, line);
         }
 
-        while(!myfile.eof() && verify == false) {
+        while(!myfile.eof()) {
             while (getline(myfile, line, ' ')) {
                 j_coord++;
 
                 if (j_coord >= initial_j && j_coord <= final_j) {
                     matrix[I][J] = stoi(line);
-                    J++;
-                    
+                    cout << "[" << I << "][" << J + 1 << "] = " << matrix[I][J] << endl;
+                    cout << endl << endl << "Line Cont = " << line_cont << " cont = " << cont << endl << endl;
 
-                    if (J == 6) {
+                    J++;
+                
+                    if (J == (final_j - initial_j + 1)) {
                         J = 0;
                         I++;
+                        cont++;
+                    }
+
+                    if(cont == line_cont) {
+                        break;
                     }
                 }
 
@@ -56,12 +61,14 @@ int main() {
                     j_coord = 0;
                 }
             }
-            
-            cont++;
-
-            if(cont == line_cont) {
-                verify = true;
-            }
         }
+    }
+
+    for (int i = 0; i < (final_i - initial_i + 1); i++) {
+        for (int j = 0; j < (final_j - initial_j + 1); j++) {
+            cout << matrix[i][j] << " ";
+        }
+
+        cout << endl;
     }
 }
