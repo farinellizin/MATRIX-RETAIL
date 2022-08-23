@@ -51,9 +51,9 @@ Data** fillMatrix(string docName, int initial_i, int initial_j, int final_i, int
                     cont++;
                 }
 
-                if (j_coord == final_j) {
+                if (j_coord >= final_j) {
                     j_coord = 0;
-                }       
+                }
             }
         }
     }
