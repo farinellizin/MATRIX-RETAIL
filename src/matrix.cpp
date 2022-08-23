@@ -14,6 +14,15 @@ void getCoordenates(int *initial_i, int *initial_j, int *final_i, int *final_j) 
     cin >> *final_j;
 }
 
+bool verifyMemory(unordered_map<long long unsigned int, Data**> memory, long long unsigned int key) {
+    auto search = memory.find(key);
+    if (search != memory.end()) {
+        return true;
+    }
+    
+    return false;
+}
+
 Data** fillMatrix(string docName, int initial_i, int initial_j, int final_i, int final_j) {
     Data** mainMatrix = 0;
     mainMatrix = new Data*[final_i - initial_i + 1];
@@ -81,39 +90,23 @@ Data** multiplyMatrices(Data **mainMatrix, Data **transposedMatrix, int size, in
     multipliedMatrix = new Data*[size];
     int sum;
 
-    // for (int i = 0; i < 20; i++) {
-    //     for (int j = 0; j < 1; j++) {
-    //         cout << transposedMatrix[i][j].value << " ";
-    //     }
-    //     cout << endl;
-    // }
-
     for (int i = 0; i < size; i++) {
         multipliedMatrix[i] = new Data[size];
         for (int j = 0; j < size; j++) {
             sum = 0;
             for (int k = 0; k < columnsTransposed; k++) {
                 sum += (mainMatrix[i][k].value * transposedMatrix[k][j].value);
-                // cout << mainMatrix[i][k].value << " * " << transposedMatrix[k][j].value << "\tcont: " << sum << "\t\t\t";
             }
  
             multipliedMatrix[i][j].value = sum;
-            // cout <<  "i: " << i << "j: " << j << endl;
         }
     }
-
-    cout << "size: " << size << endl;
-    cout << "columnsTransposed: " << columnsTransposed << endl;
-
-    for (int i = 0; i < 1; i++) {
-        for (int j = 0; j < 1; j++) {
-            cout << "result: " << multipliedMatrix[i][j].value << " ";
-        }
-        cout << endl;
-    }
-    
 
     return multipliedMatrix;
+}
+
+long long unsigned int generateKey(int initial_i, int initial_j, int final_i, int final_j) {
+    return stoi((to_string(initial_i) + to_string(initial_j) + to_string(final_i) + to_string(final_j)));
 }
 
  void printMatrix(Data **mat, int lines, int columns) {
