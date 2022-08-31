@@ -26,8 +26,9 @@ bool verifyMemory(unordered_map<long long unsigned int, Data**> memory, long lon
 Data** fillMatrix(string docName, int initial_i, int initial_j, int final_i, int final_j) {
     Data** mainMatrix = 0;
     mainMatrix = new Data*[final_i - initial_i + 1];
-    
-    int cont = 0, num_elements = (final_i - initial_i + 1) * (final_j - initial_j + 1);
+    int matrix_line_size = 20;
+    int cont = 0;
+    int num_elements = (final_i - initial_i + 1) * (final_j - initial_j + 1);
     int aux[num_elements];
     int j_coord = 0;
     string line;
@@ -44,14 +45,14 @@ Data** fillMatrix(string docName, int initial_i, int initial_j, int final_i, int
         while(!myfile.eof()) {
             while(getline(myfile, line, ' ') && cont < num_elements) {
                 j_coord++;
-
+                
                 if (j_coord >= initial_j && j_coord <= final_j) {
                     aux[a] = stoi(line);
                     a++;
                     cont++;
                 }
 
-                if (j_coord >= final_j) {
+                if (j_coord == matrix_line_size) {
                     j_coord = 0;
                 }
             }

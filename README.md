@@ -4,7 +4,7 @@
 </h1>
 
 <h4 align = "center">
-    Este repositório contém a implementacao* de um algoritmo capaz de, a partir de uma Matriz maior contida em um arquivo, retirar somente a parte desejada para processamento, alem de salvar resultados anteriores em suam memoria, tornando o processo mais rapido e sutil para a CPU.  
+    Este repositório contém a implementacao* de um sistema de multiplicação de matrizes baseando-se em uma estratégia de segmentação em arquivo.
 </h4>
 
 <h2 align="center"> 
@@ -146,7 +146,7 @@ Data** fillMatrix(string docName, int initial_i, int initial_j, int final_i, int
                     cont++;
                 }
 
-                if (j_coord >= final_j) {
+                if (j_coord >= matrix_line_size) {
                     j_coord = 0;
                 }
             }
@@ -210,6 +210,534 @@ Data** multiplyMatrices(Data **mainMatrix, Data **transposedMatrix, int size, in
 ```
 
 Por fim, a Matriz resultante, juntamente a sua Key, sao inseridas no *unordered_map*, cuja variavel eh identificada por **_memory_**, utilizando a funcao built-in **_map::emplace_**, sendo os parametros, Key e Matriz.
+
+Ainda há a possibilidade de que a Matriz desejada já tenha sido anteriormente processada. Como forma de evitar tal acontecimento, é verificado se o conteúdo que se procura já está gravado no **_std::unordered_map_** chamado de **memory**. Para tal, inicialmente é feita a verificação por meio da função **_verifyMemory()_**:
+
+```c++
+bool verifyMemory(unordered_map<long long unsigned int, Data**> memory, long long unsigned int key) {
+    auto search = memory.find(key);
+    if (search != memory.end()) {
+        return true;
+    }
+    
+    return false;
+}
+```
+
+A função acima retornará **true** caso encontre a chave desejada, portanto, impossibilitando o programa de realizar todo o processo novamente, chamando somente a função **_printMatrix()_**, para mostrar a Matriz ao usuário. A junção de todo o processo supracitado foi implementado dentro do arquivo **main.cpp**, da forma exibida abaixo:
+
+```c++
+if(!verifyMemory(memory, key)) {
+    cout << endl << endl << "\t\t~ This is this Matrix's key: " << key << endl << endl;
+
+    cout << "\t\t\t\t~ This is the Main Matrix ~" << endl << endl;
+    mainMatrix = fillMatrix(docName, initial_i, initial_j, final_i, final_j);
+    printMatrix(mainMatrix, i, j);
+
+    cout << endl << "\t\t\t~ This is the Transposed of the Main Matrix ~" << endl << endl;
+    transposedMatrix = getTransposedMatrix(mainMatrix, i, j);
+    printMatrix(transposedMatrix, j, i);
+
+    cout << endl <<"\t\t~ This is the multiplication between the two matrices above ~" << endl << endl;
+    multipliedMatrix = multiplyMatrices(mainMatrix, transposedMatrix, i, j);
+    printMatrix(multipliedMatrix, i, i);
+
+    memory.emplace(key, multipliedMatrix);
+} else {
+    cout << endl << endl << "\t\t- This matrix has already been processed, here is the result: " << endl << endl;
+    memoryMatrix = memory[key];
+    printMatrix(memoryMatrix, i, i);
+}
+```
+ <h2 align="center">
+    🔧
+    <strong>
+        <em> 
+            Resultados Esperados
+        </em>    
+    </strong>
+</h2>
+
+Ao utilizar o arquivo de texto presente nesse repositório, a Matriz lida e tida como arquivo input será a que segue:
+
+
+<table align = "center">
+  <tr>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>7</td>
+    <td>8</td>
+    <td>9</td>
+    <td>10</td>
+    <td>11</td>
+    <td>12</td>
+    <td>13</td>
+    <td>14</td>
+    <td>15</td>
+    <td>16</td>
+    <td>17</td>
+    <td>18</td>
+    <td>19</td>
+    <td>20</td>
+  </tr> 
+  <tr>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>0</td>
+    <td>2</td>
+    <td>1</td>
+    <td>2</td>
+    <td>5</td>
+    <td>1</td>
+    <td>6</td>
+    <td>1</td>
+    <td>8</td>
+    <td>9</td>
+    <td>3</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>8</td>
+    <td>9</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>8</td>
+    <td>7</td>
+    <td>0</td>
+    <td>4</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>4</td>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>7</td>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>9</td>
+    <td>7</td>
+    <td>9</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>2</td>
+    <td>5</td>
+    <td>6</td>
+    <td>8</td>
+    <td>7</td>
+    <td>3</td>
+    <td>9</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>2</td>
+    <td>6</td>
+    <td>8</td>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>6</td>
+    <td>9</td>
+    <td>8</td>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>4</td>
+    <td>8</td>
+    <td>6</td>
+    <td>9</td>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>7</td>
+    <td>8</td>
+    <td>9</td>
+    <td>6</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>5</td>
+    <td>1</td>
+    <td>4</td>
+    <td>8</td>
+    <td>7</td>
+    <td>9</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>6</td>
+    <td>5</td>
+    <td>2</td>
+    <td>1</td>
+    <td>3</td>
+    <td>6</td>
+    <td>4</td>
+    <td>7</td>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>4</td>
+    <td>5</td>
+    <td>8</td>
+    <td>7</td>
+    <td>1</td>
+    <td>9</td>
+  </tr>
+    <tr>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>9</td>
+    <td>8</td>
+    <td>5</td>
+    <td>2</td>
+    <td>3</td>
+    <td>4</td>
+    <td>7</td>
+    <td>8</td>
+    <td>5</td>
+    <td>2</td>
+    <td>1</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>2</td>
+    <td>5</td>
+    <td>4</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>5</td>
+    <td>1</td>
+    <td>4</td>
+    <td>8</td>
+    <td>7</td>
+    <td>9</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>6</td>
+    <td>5</td>
+    <td>2</td>
+    <td>1</td>
+    <td>3</td>
+    <td>6</td>
+    <td>4</td>
+    <td>7</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>6</td>
+    <td>9</td>
+    <td>8</td>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>4</td>
+    <td>8</td>
+    <td>6</td>
+    <td>9</td>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>7</td>
+    <td>8</td>
+    <td>9</td>
+    <td>6</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>9</td>
+    <td>8</td>
+    <td>5</td>
+    <td>2</td>
+    <td>3</td>
+    <td>4</td>
+    <td>7</td>
+    <td>8</td>
+    <td>5</td>
+    <td>2</td>
+    <td>1</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>2</td>
+    <td>5</td>
+    <td>4</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>5</td>
+    <td>1</td>
+    <td>4</td>
+    <td>8</td>
+    <td>7</td>
+    <td>9</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>6</td>
+    <td>5</td>
+    <td>2</td>
+    <td>1</td>
+    <td>3</td>
+    <td>6</td>
+    <td>4</td>
+    <td>7</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>6</td>
+    <td>9</td>
+    <td>8</td>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>4</td>
+    <td>8</td>
+    <td>6</td>
+    <td>9</td>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>7</td>
+    <td>8</td>
+    <td>9</td>
+    <td>6</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>9</td>
+    <td>8</td>
+    <td>5</td>
+    <td>2</td>
+    <td>3</td>
+    <td>4</td>
+    <td>7</td>
+    <td>8</td>
+    <td>5</td>
+    <td>2</td>
+    <td>1</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>2</td>
+    <td>5</td>
+    <td>4</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>8</td>
+    <td>9</td>
+    <td>0</td>
+    <td>4</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>4</td>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>7</td>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+    <td>6</td>
+    <td>9</td>
+    <td>7</td>
+    <td>9</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>0</td>
+    <td>2</td>
+    <td>1</td>
+    <td>2</td>
+    <td>5</td>
+    <td>1</td>
+    <td>6</td>
+    <td>1</td>
+    <td>8</td>
+    <td>9</td>
+    <td>3</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>8</td>
+    <td>9</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>2</td>
+    <td>5</td>
+    <td>6</td>
+    <td>8</td>
+    <td>7</td>
+    <td>3</td>
+    <td>9</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>2</td>
+    <td>6</td>
+    <td>8</td>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>0</td>
+    <td>2</td>
+    <td>1</td>
+    <td>2</td>
+    <td>5</td>
+    <td>1</td>
+    <td>6</td>
+    <td>1</td>
+    <td>8</td>
+    <td>9</td>
+    <td>3</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>8</td>
+    <td>9</td>
+    <td>2</td>
+</tr>
+  <tr>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>7</td>
+    <td>8</td>
+    <td>9</td>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>7</td>
+    <td>8</td>
+    <td>9</td>
+  </tr>
+</table>
+
+<p align="center">
+    <i>
+        Tabela 1: Matriz principal, que será processada pelo programa.
+    </i>
+</p>
+
+Em seguida, suponhamos que o usuário decidiu inserir as seguintes coordenadas:
+
+<p align="center">
+    <strong>
+        I inicial: 18 <br>
+        J inicial: 15 <br>
+        I final: 20<br>
+        J final: 20<br>
+    </strong>
+</ṕ>
+
+<h2 align="center">
+    🔧
+    <strong>
+        <em> 
+            Compilação e Execução
+        </em>    
+    </strong>
+</h2>
+
+| Comando                |  Função                                                                                           |                     
+| -----------------------| ------------------------------------------------------------------------------------------------- |
+|  `make clean`          | Apaga a última compilação realizada contida na pasta build                                        |
+|  `make`                | Executa a compilação do programa utilizando o g++, e o resultado vai para a pasta build           |
+|  `make run`            | Executa o programa da pasta build após a realização da compilação             
+
+É recomendável utilizar o comando **make clean** antes de partir para o **make** e sequencialmente **make run**.
+
 
 
 
